@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "org.example.s.client.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "MessageHandlerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

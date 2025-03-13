@@ -1,0 +1,15 @@
+/autologin add 123
+/autologin add 987
+/autoreg
+/autologin add 12345
+/autoreg
+/autologin add 123
+/ыойд
+/autoreg
+/autologin add 123
+/time set day
+/autoreg
+/autologin add 123
+/autoreg
+/autologin add 123
+/autoreg
