@@ -1,0 +1,23 @@
+{
+  "autologin_mod.title": "AutoLogin Mod Settings",
+  "autologin_mod.trigger_words": "Trigger words:",
+  "autologin_mod.add_trigger": "Add Trigger",
+  "autologin_mod.generate_password": "Generate Password",
+  "config.my_mod.title": "AutoLogin Mod",
+  "config.autologin_mod.title": "AutoLogin Config",
+  "config.autologin_mod.ip": "Server IP",
+  "config.autologin_mod.password": "Password",
+  "config.autologin_mod.add": "Add",
+  "config.autologin_mod.generate": "Generate",
+  "config.autologin_mod.delete": "Delete",
+  "config.autologin_mod.saved_servers": "Saved Passwords",
+  "config.autologin_mod.toggle_check": "on/off mod",
+  "config.autologin_mod.login_command": "Word to check:",
+  "config.autologin_mod.current_trigger": "Trigger-word",
+  "config.autologin_mod.save_trigger": "Save",
+  "config.autologin_mod.status": "Mod status",
+  "config.autologin_mod.enabled": "§2On",
+  "config.autologin_mod.disabled": "§4Off",
+  "message.autoreg": "§aPassword for server %s §ahas been set to %s",
+  "message.autologin": "§aPassword for server %s §ahas been updated to %s"
+}
