@@ -6,14 +6,11 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import org.example.s.PasswordGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class AutoLoginConfigScreen extends Screen {
-    static final Logger LOGGER = LoggerFactory.getLogger("AutoLogin Config");
     public static JSONConfigHandler.ConfigData config = JSONConfigHandler.loadConfig();
     private int scrollOffset = 0;
     private final Screen parent;
@@ -274,9 +271,6 @@ public class AutoLoginConfigScreen extends Screen {
             saveConfig();
             ipField.setText("");
             passwordField.setText("");
-        } else {
-            // Добавьте обработку случая, когда поля пустые
-            LOGGER.info("Поля IP или пароля пустые, добавление невозможно");
         }
     }
 
@@ -287,9 +281,6 @@ public class AutoLoginConfigScreen extends Screen {
             passwordField.setText(password);
             servers.put(ip, password);
             saveConfig();
-        } else {
-            // Добавьте обработку случая, когда поле IP пустое
-            LOGGER.info("Поле IP пустое, генерация невозможна");
         }
     }
 
@@ -335,8 +326,29 @@ public class AutoLoginConfigScreen extends Screen {
             }
             return true;
         }
+
+        // Удаление сервера по клавише Delete
+        if (keyCode == 261) { // Код клавиши Delete
+            if (selectedServer != null) {
+                deleteServer();
+                return true;
+            }
+        }
+
+        // Копирование пароля в буфер обмена при Ctrl + C
+        if (keyCode == 67 && (modifiers & 2) != 0) { // 67 = C, 2 = Ctrl
+            if (selectedServer != null && servers.containsKey(selectedServer)) {
+                String password = servers.get(selectedServer);
+                if (password != null) {
+                    client.keyboard.setClipboard(password);
+                }
+                return true;
+            }
+        }
+
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
+
 
     @Override
     public boolean charTyped(char chr, int modifiers) {

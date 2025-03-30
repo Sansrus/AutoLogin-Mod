@@ -18,6 +18,9 @@
   "config.autologin_mod.status": "Статус Мода",
   "config.autologin_mod.enabled": "§2Вкл",
   "config.autologin_mod.disabled": "§4Выкл",
-  "message.autoreg": "§aУстановлен пароль для сервера %s §aна %s",
-  "message.autologin": "§aПароль для сервера %s §aобновлен на %s"
+  "message.autoreg": "§aУстановлен пароль для сервера %s",
+  "message.autologin": "§aПароль для сервера %s §aобновлен",
+  "error.not_connected": "§4Нет подключения!",
+  "error.no_password": "§4Пароля для сервера нету!",
+  "error.no_triggers": "§4Нету триггеров!"
 }

@@ -18,7 +18,7 @@ public class JSONConfigHandler {
     public static class ConfigData {
         public String triggers = "login";
         public boolean check_enabled = true;
-        public boolean currentCheck = true; // Новый флаг
+        public boolean currentCheck = true;
         public Map<String, String> passwords = new HashMap<>();
     }
 
@@ -30,6 +30,7 @@ public class JSONConfigHandler {
                 saveConfig(new ConfigData());
             } catch (IOException e) {
                 System.err.println("Ошибка при создании файла конфигурации: " + e.getMessage());
+                return new ConfigData();
             }
         }
 

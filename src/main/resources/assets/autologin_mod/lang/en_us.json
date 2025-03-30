@@ -18,6 +18,9 @@
   "config.autologin_mod.status": "Mod status",
   "config.autologin_mod.enabled": "§2On",
   "config.autologin_mod.disabled": "§4Off",
-  "message.autoreg": "§aPassword for server %s §ahas been set to %s",
-  "message.autologin": "§aPassword for server %s §ahas been updated to %s"
+  "message.autoreg": "§aPassword for server %s §ahas been set",
+  "message.autologin": "§aPassword for server %s §ahas been updated",
+  "error.not_connected": "§4There is no connection!",
+  "error.no_password": "§4There is no password for the server!",
+  "error.no_triggers": "§4No triggers!"
 }

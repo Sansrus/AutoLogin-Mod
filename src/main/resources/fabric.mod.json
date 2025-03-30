@@ -22,7 +22,6 @@
     "modmenu": ["org.example.s.client.autologin_modClient"]
   },
   "mixins": [
-    "autologin_mod.mixins.json",
     {
       "config": "autologin_mod.client.mixins.json",
       "environment": "client"
@@ -31,7 +30,9 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": ">=${minecraft_version}",
+    "minecraft": ">=${minecraft_version}"
+  },
+  "suggests": {
     "modmenu": ">=11.0.1",
     "cloth-config": ">=15.0.140"
   }
