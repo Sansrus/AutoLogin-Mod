@@ -7,7 +7,8 @@
   "authors": ["Sansrus"],
   "contact": {
     "homepage": "https://modrinth.com/user/Sansrus",
-    "sources": "https://github.com/Sansrus"
+    "sources": "https://github.com/Sansrus/AutoLogin-Mod",
+    "issues": "https://github.com/Sansrus/AutoLogin-Mod/issues"
   },
   "license": "All-Rights-Reserved",
   "icon": "icon.png",

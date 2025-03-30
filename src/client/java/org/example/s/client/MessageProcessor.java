@@ -2,13 +2,17 @@ package org.example.s.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class MessageProcessor {
+    private static final Logger LOGGER = LogManager.getLogger("AutoLogin");
     public static void processMessage(Text message, Logger logger) {
         String text = message.getString()
                 .replaceAll("[^\\S\\r\\n]+", "")
                 .replaceAll("[,]+$", "");
+
+        LOGGER.info("Получение строки: " + text);
 
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
