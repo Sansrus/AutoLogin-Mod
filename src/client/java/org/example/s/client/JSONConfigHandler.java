@@ -29,7 +29,6 @@ public class JSONConfigHandler {
                 CONFIG_FILE.createNewFile();
                 saveConfig(new ConfigData());
             } catch (IOException e) {
-                System.err.println("Ошибка при создании файла конфигурации: " + e.getMessage());
                 return new ConfigData();
             }
         }
@@ -37,7 +36,6 @@ public class JSONConfigHandler {
         try (FileReader reader = new FileReader(CONFIG_FILE)) {
             return GSON.fromJson(reader, ConfigData.class);
         } catch (IOException e) {
-            System.err.println("Ошибка при загрузке конфигурации: " + e.getMessage());
             return new ConfigData();
         }
     }
@@ -46,7 +44,6 @@ public class JSONConfigHandler {
         try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
             GSON.toJson(config, writer);
         } catch (IOException e) {
-            System.err.println("Ошибка при сохранении конфигурации: " + e.getMessage());
         }
     }
 }

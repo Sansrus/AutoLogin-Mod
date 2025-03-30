@@ -28,7 +28,6 @@ public class AutoLoginConfigScreen extends Screen {
     public AutoLoginConfigScreen(Screen parent) {
         super(Text.translatable("config.autologin_mod.title"));
         this.parent = parent;
-//        loadConfig(); // Загрузка конфига при инициализации
     }
 
     @Override

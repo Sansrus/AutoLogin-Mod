@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "autologin_mod",
+  "version": "1.1.0",
+  "name": "AutoLogin Mod",
+  "description": "Мод для автоматического ввода пароля",
+  "authors": ["Sansrus"],
+  "contact": {
+    "homepage": "https://modrinth.com/user/Sansrus",
+    "sources": "https://github.com/Sansrus/AutoLogin-Mod",
+    "issues": "https://github.com/Sansrus/AutoLogin-Mod/issues"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "org.example.s.client.autologin_modClient"
+    ],
+    "main": [
+      "org.example.s.autologin_mod"
+    ],
+    "modmenu": ["org.example.s.client.autologin_modClient"]
+  },
+  "mixins": [
+    {
+      "config": "autologin_mod.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "fabric": "*",
+    "minecraft": ">=1.21"
+  },
+  "suggests": {
+    "modmenu": ">=11.0.1",
+    "cloth-config": ">=15.0.140"
+  }
+}

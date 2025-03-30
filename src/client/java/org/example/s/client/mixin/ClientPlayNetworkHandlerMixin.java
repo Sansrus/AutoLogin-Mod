@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,48 +39,6 @@ private static final Logger LOGGER = LogManager.getLogger("AutoLogin");
     }
 
     //Чтение Заголовка
-//    @Inject(method = "onTitle", at = @At("TAIL"))
-//    private void onTitle(TitleS2CPacket packet, CallbackInfo ci) {
-//        try {
-//            Text titleText = null;
-//            Method m = null;
-//            // Попытка найти метод text()
-//            try {
-//                m = packet.getClass().getDeclaredMethod("text");
-//            } catch (NoSuchMethodException e) {
-//                // Если не найден, пробуем getText()
-//                try {
-//                    m = packet.getClass().getDeclaredMethod("getText");
-//                } catch (NoSuchMethodException ex) {
-//                    LOGGER.warn("(AutoLogin) Методы text() и getText() не найдены, переходим к fallback.");
-//                }
-//            }
-//            if (m != null) {
-//                m.setAccessible(true);
-//                Object result = m.invoke(packet);
-//                if (result instanceof Text) {
-//                    titleText = (Text) result;
-//                }
-//            }
-//            // Если через методы не получили, пробуем fallback через поле "text"
-//            if (titleText == null) {
-//                Object titleField = extractField(packet, "text");
-//                if (titleField instanceof Text) {
-//                    titleText = (Text) titleField;
-//                }
-//            }
-//            if (titleText != null) {
-//                String titleStr = titleText.getString();
-//                LOGGER.info("(AutoLogin) Проверка заголовка: " + titleStr);
-//                MessageProcessor.processMessage(titleText, LOGGER);
-//            } else {
-//                LOGGER.warn("(AutoLogin) Не удалось получить текст заголовка.");
-//            }
-//        } catch (Exception e) {
-//            LOGGER.error("(AutoLogin) Ошибка при обработке заголовка: ", e);
-//        }
-//    }
-
     @Inject(method = "onTitle", at = @At("TAIL"))
     private void onTitle(TitleS2CPacket packet, CallbackInfo ci) {
         try {
@@ -90,7 +47,6 @@ private static final Logger LOGGER = LogManager.getLogger("AutoLogin");
                 Object value = field.get(packet);
                 if (value instanceof Text) {
                     MessageProcessor.processMessage((Text) value, LOGGER);
-                    LOGGER.info("Получение заголовка: " + value);
                 }
             }
         } catch (Exception e) {
