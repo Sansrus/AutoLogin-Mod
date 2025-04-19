@@ -58,9 +58,9 @@ public class CommandHandler {
 
                     if (server != null) {
                         String password = PasswordGenerator.generate(15);
-                        JSONConfigHandler.ConfigData config = JSONConfigHandler.loadConfig();
+                        JSONConfigHandler.PlayerConfig config = JSONConfigHandler.getCurrentPlayerConfig();
                         config.passwords.put(server.address, password);
-                        JSONConfigHandler.saveConfig(config);
+                        JSONConfigHandler.saveCurrentPlayerConfig(config);
 
                         // Отправка команды регистрации
                         if (client.getNetworkHandler() != null) {
@@ -83,9 +83,9 @@ public class CommandHandler {
         ServerInfo server = client.getCurrentServerEntry();
 
         if (server != null) {
-            JSONConfigHandler.ConfigData config = JSONConfigHandler.loadConfig();
+            JSONConfigHandler.PlayerConfig config = JSONConfigHandler.getCurrentPlayerConfig();
             config.passwords.put(server.address, password);
-            JSONConfigHandler.saveConfig(config);
+            JSONConfigHandler.saveCurrentPlayerConfig(config);
 
             client.player.sendMessage(
                     Text.translatable("message.autologin", server.address, password),
@@ -106,7 +106,7 @@ public class CommandHandler {
             return 0;
         }
 
-        JSONConfigHandler.ConfigData config = JSONConfigHandler.loadConfig();
+        JSONConfigHandler.PlayerConfig config = JSONConfigHandler.getCurrentPlayerConfig();
         String password = config.passwords.get(serverAddress);
 
         if (password == null || password.isEmpty()) {

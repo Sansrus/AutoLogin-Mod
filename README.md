@@ -12,4 +12,8 @@ The mod has 2 commands:
 /autoreg - the command will create a password for the server and automatically enter the command:
 "/register <password> <password>"
 
+When you select a password, you can press the Del button to delete or Ctrl + C to copy the password.
+
+The mod also supports nickname operation: Each nickname has its own password list.
+
 Have a nice game

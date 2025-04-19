@@ -10,7 +10,7 @@
   "config.autologin_mod.add": "Add",
   "config.autologin_mod.generate": "Generate",
   "config.autologin_mod.delete": "Delete",
-  "config.autologin_mod.saved_servers": "Saved Passwords",
+  "config.autologin_mod.saved_servers": "Saved Passwords for %s",
   "config.autologin_mod.toggle_check": "on/off mod",
   "config.autologin_mod.login_command": "Word to check:",
   "config.autologin_mod.current_trigger": "Trigger-word",

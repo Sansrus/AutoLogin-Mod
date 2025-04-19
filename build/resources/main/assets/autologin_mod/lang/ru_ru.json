@@ -10,7 +10,7 @@
   "config.autologin_mod.add": "Добавить",
   "config.autologin_mod.generate": "Сгенерировать",
   "config.autologin_mod.delete": "Удалить",
-  "config.autologin_mod.saved_servers": "Сохраненные пароли",
+  "config.autologin_mod.saved_servers": "Сохраненные пароли для %s",
   "config.autologin_mod.toggle_check": "вкл/выкл мод",
   "config.autologin_mod.login_command": "Слово для проверки:",
   "config.autologin_mod.current_trigger": "Триггер-слово",

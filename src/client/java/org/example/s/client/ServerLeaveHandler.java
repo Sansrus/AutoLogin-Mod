@@ -6,10 +6,10 @@ public class ServerLeaveHandler {
     public static void init() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.getCurrentServerEntry() == null) {
-                JSONConfigHandler.ConfigData config = JSONConfigHandler.loadConfig();
+                JSONConfigHandler.PlayerConfig config = JSONConfigHandler.getCurrentPlayerConfig();
                 if (!config.currentCheck) {
                     config.currentCheck = true;
-                    JSONConfigHandler.saveConfig(config);
+                    JSONConfigHandler.saveCurrentPlayerConfig(config);
                 }
             }
         });

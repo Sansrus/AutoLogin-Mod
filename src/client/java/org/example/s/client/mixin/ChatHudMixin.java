@@ -19,7 +19,7 @@ public class ChatHudMixin {
             method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V",
             cancellable = true)
     private void onAddMessage(Text message, MessageSignatureData signatureData, MessageIndicator indicator, CallbackInfo ci) {
-        System.out.println("Сообщение в чате: " + message.getString());
         MessageProcessor.processMessage(message, LOGGER);
+        LOGGER.info("Сообщение чата: " + message);
     }
 }

@@ -1,5 +1,6 @@
 package org.example.s.client;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AutoLoginConfigScreen extends Screen {
-    public static JSONConfigHandler.ConfigData config = JSONConfigHandler.loadConfig();
+    public static JSONConfigHandler.PlayerConfig config = JSONConfigHandler.getCurrentPlayerConfig();
     private int scrollOffset = 0;
     private final Screen parent;
     private TextFieldWidget ipField;
@@ -32,7 +33,7 @@ public class AutoLoginConfigScreen extends Screen {
 
     @Override
     protected void init() {
-        JSONConfigHandler.ConfigData config = JSONConfigHandler.loadConfig();
+        JSONConfigHandler.PlayerConfig config = JSONConfigHandler.getCurrentPlayerConfig();
         // Поля ввода
         ipField = new TextFieldWidget(
                 textRenderer,
@@ -155,7 +156,8 @@ public class AutoLoginConfigScreen extends Screen {
         int listHeight = height / 2 - 40;
 
         context.fill(listX - 1, listY - 1, listX + listWidth + 1, listY + listHeight + 1, 0x80000000);
-        context.drawText(textRenderer, Text.translatable("config.autologin_mod.saved_servers"), listX, listY - 20, 0xFFFFFF, false);
+        String username = MinecraftClient.getInstance().getSession().getUsername();
+        context.drawText(textRenderer, Text.translatable("config.autologin_mod.saved_servers", username), listX, listY - 20, 0xFFFFFF, false);
 
         int listXPol = width / 4 * 3;
         int listYPol = height / 4 + 20;
@@ -165,9 +167,6 @@ public class AutoLoginConfigScreen extends Screen {
         int visibleEntries = listHeightPol / entryHeight;
         int totalEntries = servers.size();
         int maxScroll = Math.max(0, totalEntries - visibleEntries);
-
-        context.fill(listXPol - 1, listYPol - 1, listXPol + listWidthPol + 1, listYPol + listHeightPol + 1, 0x80000000);
-        context.drawText(textRenderer, Text.translatable("config.autologin_mod.saved_servers"), listXPol, listYPol - 20, 0xFFFFFF, false);
 
         int entryCount = 0;
         int renderedEntries = 0;
@@ -221,11 +220,7 @@ public class AutoLoginConfigScreen extends Screen {
     private void toggleLoginCheck() {
         config.check_enabled = !config.check_enabled;
         toggleCheckButton.setMessage(Text.translatable(config.check_enabled ? "config.autologin_mod.enabled" : "config.autologin_mod.disabled"));
-        JSONConfigHandler.saveConfig(config);
-    }
-
-    private void saveTrigger() {
-        saveConfig();
+        JSONConfigHandler.saveCurrentPlayerConfig(config);
     }
 
     @Override
@@ -293,7 +288,7 @@ public class AutoLoginConfigScreen extends Screen {
 
     //Метод загрузки конфига
     private void loadConfig() {
-        config = JSONConfigHandler.loadConfig();
+        config = JSONConfigHandler.getCurrentPlayerConfig();
         servers.putAll(config.passwords);
         // Устанавливаем значение триггер-слова в поле ввода
         if (loginCommandField != null) {
@@ -307,7 +302,7 @@ public class AutoLoginConfigScreen extends Screen {
             config.triggers = loginCommandField.getText();
             config.passwords.clear();
             config.passwords.putAll(servers);
-            JSONConfigHandler.saveConfig(config);
+            JSONConfigHandler.saveCurrentPlayerConfig(config);
         }
     }
 

@@ -135,17 +135,5 @@ private static final Logger LOGGER = LogManager.getLogger("AutoLogin");
     private Text findTextRecursively(Object obj) {
         return findTextRecursively(obj, 0, 10, new HashSet<>());
     }
-
-    // Метод для рефлексии, чтобы доставать нужные поля, если их нет в API
-    private static Object extractField(Object obj, String fieldName) {
-        try {
-            java.lang.reflect.Field field = obj.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            return field.get(obj);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            LOGGER.error("Error receiving the {}field: {}", fieldName, e.getMessage());
-            return null;
-        }
-    }
 }
 

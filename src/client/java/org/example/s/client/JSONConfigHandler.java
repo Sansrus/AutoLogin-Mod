@@ -16,6 +16,10 @@ public class JSONConfigHandler {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static class ConfigData {
+        public Map<String, PlayerConfig> players = new HashMap<>(); // Ключ - ник игрока
+    }
+
+    public static class PlayerConfig {
         public String triggers = "login";
         public boolean check_enabled = true;
         public boolean currentCheck = true;
@@ -44,6 +48,21 @@ public class JSONConfigHandler {
         try (FileWriter writer = new FileWriter(CONFIG_FILE)) {
             GSON.toJson(config, writer);
         } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    public static PlayerConfig getCurrentPlayerConfig() {
+        ConfigData config = loadConfig();
+        String currentUsername = MinecraftClient.getInstance().getSession().getUsername();
+        
+        return config.players.getOrDefault(currentUsername, new PlayerConfig());
+    }
+
+    public static void saveCurrentPlayerConfig(PlayerConfig playerConfig) {
+        ConfigData config = loadConfig();
+        String currentUsername = MinecraftClient.getInstance().getSession().getUsername();
+        config.players.put(currentUsername, playerConfig);
+        saveConfig(config);
     }
 }
