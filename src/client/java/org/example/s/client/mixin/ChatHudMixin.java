@@ -20,6 +20,5 @@ public class ChatHudMixin {
             cancellable = true)
     private void onAddMessage(Text message, MessageSignatureData signatureData, MessageIndicator indicator, CallbackInfo ci) {
         MessageProcessor.processMessage(message, LOGGER);
-        LOGGER.info("Сообщение чата: " + message);
     }
 }

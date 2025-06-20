@@ -16,6 +16,8 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import org.example.s.PasswordGenerator;
 
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+
 public class CommandHandler {
     public static void init() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
@@ -26,55 +28,70 @@ public class CommandHandler {
     public static void registerCommands(CommandDispatcher<FabricClientCommandSource> dispatcher,
                                         CommandRegistryAccess registryAccess,
                                         CommandManager.RegistrationEnvironment environment) {
-        // Общий обработчик для autologin и al
-        LiteralArgumentBuilder<FabricClientCommandSource> autologinCommand = ClientCommandManager.literal("autologin")
-                .then(ClientCommandManager.literal("add")
+        // 1) Определяем основную команду autologin
+        LiteralArgumentBuilder<FabricClientCommandSource> autologinCommand = literal("autologin")
+                .then(literal("add")
                         .then(ClientCommandManager.argument("password", StringArgumentType.string())
-                                .executes(context -> handleAddPassword(context))
+                                .executes(CommandHandler::handleAddPassword)
                         )
                 )
-                .executes(context -> handleAutoLogin(context));
+                .executes(CommandHandler::handleAutoLogin);
 
-        // Регистрация основной команды
+        // Регистрируем основную команду и сохраняем её узел
         CommandNode<FabricClientCommandSource> autologinNode = dispatcher.register(autologinCommand);
 
-        // Регистрируем алиас al с полным перенаправлением
-        dispatcher.register(ClientCommandManager.literal("al")
-                // Перенаправляем основной вызов
-                .executes(context -> dispatcher.execute("autologin", context.getSource()))
-                // Перенаправляем подкоманду add
-                .then(ClientCommandManager.literal("add")
-                        .then(ClientCommandManager.argument("password", StringArgumentType.string())
-                                .redirect(autologinNode.getChild("add"))
+        // 2) Регистрируем алиас "al" и перенаправляем туда всё из autologin,
+        dispatcher.register(
+                ClientCommandManager.literal("al")
+                        // без аргументов → /autologin
+                        .executes(ctx -> dispatcher.execute("autologin", ctx.getSource()))
+                        // подкоманда add → перенаправляем именно на ноду autologin.add
+                        .then(ClientCommandManager.literal("add")
+                                .then(ClientCommandManager.argument("password", StringArgumentType.greedyString())
+                                        .redirect(autologinNode.getChild("add"))
+                                )
                         )
-                )
         );
 
-        // Команда autoreg
-        dispatcher.register(ClientCommandManager.literal("autoreg")
-                .executes(context -> {
+        // 3) Определяем и регистрируем основную команду autoreg
+        LiteralArgumentBuilder<FabricClientCommandSource> autoreg = literal("autoreg")
+                .executes(ctx -> {
                     MinecraftClient client = MinecraftClient.getInstance();
                     ServerInfo server = client.getCurrentServerEntry();
-
-                    if (server != null) {
-                        String password = PasswordGenerator.generate(15);
-                        JSONConfigHandler.PlayerConfig config = JSONConfigHandler.getCurrentPlayerConfig();
-                        config.passwords.put(server.address, password);
-                        JSONConfigHandler.saveCurrentPlayerConfig(config);
-
-                        // Отправка команды регистрации
-                        if (client.getNetworkHandler() != null) {
-                            client.getNetworkHandler().sendChatCommand("register " + password + " " + password);
-                        }
-
-                        client.player.sendMessage(
-                                Text.translatable("message.autoreg", server.address),
-                                false
-                        );
+                    if (server == null) {
+                        return 0;
                     }
+                    String address = server.address;
+                    JSONConfigHandler.PlayerConfig cfg = JSONConfigHandler.getCurrentPlayerConfig();
+
+                    // Если пароль уже есть — сообщаем и выходим
+                    if (cfg.passwords.containsKey(address)) {
+                        client.player.sendMessage(Text.translatable("error.already_password", address), false);
+                        return 0;
+                    }
+
+                    // Иначе — генерируем, сохраняем и отправляем в чат
+                    String password = PasswordGenerator.generate(15);
+                    cfg.passwords.put(address, password);
+                    JSONConfigHandler.saveCurrentPlayerConfig(cfg);
+
+                    if (client.getNetworkHandler() != null) {
+                        client.getNetworkHandler().sendChatCommand("register " + password + " " + password);
+                    }
+                    client.player.sendMessage(Text.translatable("message.autoreg", address), false);
                     return 1;
-                })
+                });
+
+        // Регистрируем autoreg и сохраняем его узел
+        CommandNode<FabricClientCommandSource> autoregNode = dispatcher.register(autoreg);
+
+        // 4) Регистрируем алиас "ar" для autoreg (без дополнительных подкоманд)
+        dispatcher.register(
+                ClientCommandManager.literal("ar")
+                        // без аргументов → /autoreg
+                        .executes(ctx -> dispatcher.execute("autoreg", ctx.getSource()))
         );
+
     }
 
     private static int handleAddPassword(CommandContext<FabricClientCommandSource> context) throws CommandSyntaxException {

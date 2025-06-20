@@ -32,7 +32,6 @@ public class MessageProcessor {
                         .replaceAll("")
                         .replace("/", "")
         ).replaceAll("");
-        logger.info("Обработанное сообщение: '{}'", text);
 
 
         MinecraftClient client = MinecraftClient.getInstance();
@@ -42,13 +41,11 @@ public class MessageProcessor {
 
         String serverAddress = client.getCurrentServerEntry() != null ? client.getCurrentServerEntry().address : null;
         if (serverAddress == null) return;
-        logger.info("Текущий сервер: {}", serverAddress);
 
         String password = config.passwords.get(serverAddress);
         if (password == null) return;
 
         for (String trigger : triggers) {
-            logger.info("Список триггеров: " + trigger);
             if (text.contains(trigger.trim())) {
                 client.getNetworkHandler().sendChatCommand("login " + password);
                 config.currentCheck = false;

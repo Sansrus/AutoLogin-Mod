@@ -5,9 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/AutoLogin_Mod.client.iml" filepath="$PROJECT_DIR$/.idea/modules/AutoLogin_Mod.client.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/AutoLogin_Mod.main.iml" filepath="$PROJECT_DIR$/.idea/modules/AutoLogin_Mod.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/AutoLogin_Mod.test.iml" filepath="$PROJECT_DIR$/.idea/modules/AutoLogin_Mod.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.example.s.AutoLogin_Mod.client.iml" filepath="$PROJECT_DIR$/.idea/modules/org.example.s.AutoLogin_Mod.client.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.example.s.AutoLogin_Mod.main.iml" filepath="$PROJECT_DIR$/.idea/modules/org.example.s.AutoLogin_Mod.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/org.example.s.AutoLogin_Mod.test.iml" filepath="$PROJECT_DIR$/.idea/modules/org.example.s.AutoLogin_Mod.test.iml" />
     </modules>
   </component>
 </project>

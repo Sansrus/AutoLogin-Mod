@@ -100,7 +100,6 @@ private static final Logger LOGGER = LogManager.getLogger("AutoLogin");
                 LOGGER.error("(AutoLogin) It was not possible to extract the text of the boss bar either in the main way or through the fallback.");
             }
         } catch (Exception e) {
-            LOGGER.error("(AutoLogin) Error when extracting the boss bar text: ");
         }
         return null;
     }

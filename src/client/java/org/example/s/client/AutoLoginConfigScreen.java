@@ -2,6 +2,7 @@ package org.example.s.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -9,6 +10,7 @@ import net.minecraft.text.Text;
 import org.example.s.PasswordGenerator;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AutoLoginConfigScreen extends Screen {
@@ -78,7 +80,7 @@ public class AutoLoginConfigScreen extends Screen {
                 button -> deleteServer()
         ).dimensions(
                 width / 4 * 3,
-                height / 4 + 250,
+                (int) (height * 0.74),
                 100,
                 20
         ).build();
@@ -92,7 +94,7 @@ public class AutoLoginConfigScreen extends Screen {
                 20,
                 Text.translatable("config.autologin_mod.login_command")
         );
-        addDrawableChild(loginCommandField);
+
 
         toggleCheckButton = ButtonWidget.builder(
                 Text.translatable(config.check_enabled ? "config.autologin_mod.enabled" : "config.autologin_mod.disabled"),
@@ -103,7 +105,7 @@ public class AutoLoginConfigScreen extends Screen {
                 100,
                 20
         ).build();
-        addDrawableChild(toggleCheckButton);
+
 
         saveTriggerButton = ButtonWidget.builder(
                 Text.translatable("config.autologin_mod.save_trigger"),
@@ -114,9 +116,10 @@ public class AutoLoginConfigScreen extends Screen {
                 100,
                 20
         ).build();
+
+
+        addDrawableChild(loginCommandField);
         addDrawableChild(saveTriggerButton);
-
-
         addDrawableChild(toggleCheckButton);
         addDrawableChild(ipField);
         addDrawableChild(passwordField);
@@ -127,27 +130,37 @@ public class AutoLoginConfigScreen extends Screen {
         // Кнопка "Назад"
         addDrawableChild(ButtonWidget.builder(
                 Text.translatable("gui.back"),
-                button -> client.setScreen(parent)
+                button -> {
+                    assert client != null;
+                    client.setScreen(parent);
+                }
         ).dimensions(5, 5, 60, 20).build());
 
         loadConfig();
     }
 
+//    @Override
+//    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+//        super.render(context, mouseX, mouseY, delta);
+//
+//            context.drawCenteredTextWithShadow(
+//                    this.textRenderer,
+//                    Text.literal("Opaque Text"),
+//                    this.width / 2,
+//                    this.height / 2,
+//                    0xFFFFFFFF // 0xFF - альфа-канал (не прозрачный)
+//            );
+//    }
+
+    @Override
+    public boolean shouldCloseOnEsc() {
+        return true; // Позволяет закрыть экран по нажатию Escape
+    }
+
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context, mouseX, mouseY, delta);
+//        this.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
-
-        // Отрисовка заголовков полей по центру
-        context.drawText(textRenderer, Text.translatable("config.autologin_mod.ip"), width / 4, height / 4 + 45, 0xFFFFFF, false);
-        context.drawText(textRenderer, Text.translatable("config.autologin_mod.password"), width / 4, height / 4 + 85, 0xFFFFFF, false);
-        context.drawText(textRenderer, Text.translatable("config.autologin_mod.login_command"), width / 4, height / 4 + 125, 0xFFFFFF, false);
-        String statusText = Text.translatable("config.autologin_mod.status", config.check_enabled ? "Включен" : "Выключен").getString();
-        int statusX = width / 2 - textRenderer.getWidth(statusText) / 2;
-        context.drawText(textRenderer, Text.translatable(statusText), statusX, 40, 0xFFFFFF, false);
-
-        // Отрисовка текущего триггер-слова
-        context.drawText(textRenderer, Text.translatable("config.autologin_mod.current_trigger", loginCommandField.getText()), width / 4, height / 4 + 165, 0xFFFFFF, false);
 
         // Отрисовка списка сохраненных паролей с прокруткой
         int listX = width / 4 * 3;
@@ -157,7 +170,7 @@ public class AutoLoginConfigScreen extends Screen {
 
         context.fill(listX - 1, listY - 1, listX + listWidth + 1, listY + listHeight + 1, 0x80000000);
         String username = MinecraftClient.getInstance().getSession().getUsername();
-        context.drawText(textRenderer, Text.translatable("config.autologin_mod.saved_servers", username), listX, listY - 20, 0xFFFFFF, false);
+        context.drawText(this.textRenderer, Text.translatable("config.autologin_mod.saved_servers", username), listX, listY - 20, 0xFFFFFFFF, false);
 
         int listXPol = width / 4 * 3;
         int listYPol = height / 4 + 20;
@@ -182,7 +195,7 @@ public class AutoLoginConfigScreen extends Screen {
             String password = entry.getValue();
 
             String displayText = ip + "=" + password;
-            context.drawText(textRenderer, Text.literal(displayText), listX, listY + renderedEntries * entryHeight, 0xFFFFFF, false);
+            context.drawText(this.textRenderer, Text.literal(displayText), listX, listY + renderedEntries * entryHeight, 0xFFFFFFFF, false);
 
             if (ip.equals(selectedServer)) {
                 context.fill(listX, listYPol + renderedEntries * entryHeight, listXPol + listWidthPol, listYPol + (renderedEntries + 1) * entryHeight, 0x30FFFFFF);
@@ -198,6 +211,19 @@ public class AutoLoginConfigScreen extends Screen {
 
             context.fill(scrollBarX, scrollBarY, scrollBarX + 5, scrollBarY + scrollBarHeight, 0x808080);
         }
+
+        // Отрисовка заголовков полей по центру
+        context.drawText(this.textRenderer, Text.translatable("config.autologin_mod.ip"), width / 4, height / 4 + 45, 0xFFFFFFFF, false);
+        context.drawText(this.textRenderer, Text.translatable("config.autologin_mod.password"), width / 4, height / 4 + 85, 0xFFFFFFFF, false);
+        context.drawText(this.textRenderer, Text.translatable("config.autologin_mod.login_command"), width / 4, height / 4 + 125, 0xFFFFFFFF, false);
+        String statusText = Text.translatable("config.autologin_mod.status", config.check_enabled ? "Включен" : "Выключен").getString();
+        int statusX = width / 2 - textRenderer.getWidth(statusText) / 2;
+        context.drawText(this.textRenderer, statusText, statusX, 40, 0xFFFFFFFF, false);
+
+        // Отрисовка текущего триггер-слова
+        context.drawText(this.textRenderer, Text.translatable("config.autologin_mod.current_trigger", loginCommandField.getText()), width / 4, height / 4 + 165, 0xFFFFFFFF, false);
+
+
     }
 
     @Override
