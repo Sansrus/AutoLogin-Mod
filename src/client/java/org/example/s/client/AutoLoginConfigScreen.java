@@ -2,7 +2,6 @@ package org.example.s.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -10,7 +9,6 @@ import net.minecraft.text.Text;
 import org.example.s.PasswordGenerator;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AutoLoginConfigScreen extends Screen {
@@ -36,6 +34,7 @@ public class AutoLoginConfigScreen extends Screen {
     @Override
     protected void init() {
         JSONConfigHandler.PlayerConfig config = JSONConfigHandler.getCurrentPlayerConfig();
+
         // Поля ввода
         ipField = new TextFieldWidget(
                 textRenderer,
@@ -95,7 +94,6 @@ public class AutoLoginConfigScreen extends Screen {
                 Text.translatable("config.autologin_mod.login_command")
         );
 
-
         toggleCheckButton = ButtonWidget.builder(
                 Text.translatable(config.check_enabled ? "config.autologin_mod.enabled" : "config.autologin_mod.disabled"),
                 button -> toggleLoginCheck()
@@ -105,7 +103,6 @@ public class AutoLoginConfigScreen extends Screen {
                 100,
                 20
         ).build();
-
 
         saveTriggerButton = ButtonWidget.builder(
                 Text.translatable("config.autologin_mod.save_trigger"),
@@ -117,7 +114,6 @@ public class AutoLoginConfigScreen extends Screen {
                 20
         ).build();
 
-
         addDrawableChild(loginCommandField);
         addDrawableChild(saveTriggerButton);
         addDrawableChild(toggleCheckButton);
@@ -126,6 +122,9 @@ public class AutoLoginConfigScreen extends Screen {
         addDrawableChild(addButton);
         addDrawableChild(generateButton);
         addDrawableChild(deleteButton);
+        addSelectableChild(ipField);
+        addSelectableChild(passwordField);
+        addSelectableChild(loginCommandField);
 
         // Кнопка "Назад"
         addDrawableChild(ButtonWidget.builder(
@@ -139,147 +138,160 @@ public class AutoLoginConfigScreen extends Screen {
         loadConfig();
     }
 
-//    @Override
-//    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-//        super.render(context, mouseX, mouseY, delta);
-//
-//            context.drawCenteredTextWithShadow(
-//                    this.textRenderer,
-//                    Text.literal("Opaque Text"),
-//                    this.width / 2,
-//                    this.height / 2,
-//                    0xFFFFFFFF // 0xFF - альфа-канал (не прозрачный)
-//            );
-//    }
-
     @Override
     public boolean shouldCloseOnEsc() {
-        return true; // Позволяет закрыть экран по нажатию Escape
+        return true;
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-//        this.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
 
-        // Отрисовка списка сохраненных паролей с прокруткой
+        // Параметры списка серверов
         int listX = width / 4 * 3;
         int listY = height / 4 + 20;
         int listWidth = width / 4;
         int listHeight = height / 2 - 40;
+        int entryHeight = 20;
+        int visibleEntries = listHeight / entryHeight;
+        int totalEntries = servers.size();
 
+        // Рамка списка
         context.fill(listX - 1, listY - 1, listX + listWidth + 1, listY + listHeight + 1, 0x80000000);
+
         String username = MinecraftClient.getInstance().getSession().getUsername();
         context.drawText(this.textRenderer, Text.translatable("config.autologin_mod.saved_servers", username), listX, listY - 20, 0xFFFFFFFF, false);
 
-        int listXPol = width / 4 * 3;
-        int listYPol = height / 4 + 20;
-        int listWidthPol = width / 4;
-        int listHeightPol = height / 2 - 40;
-        int entryHeight = 20;
-        int visibleEntries = listHeightPol / entryHeight;
-        int totalEntries = servers.size();
-        int maxScroll = Math.max(0, totalEntries - visibleEntries);
-
-        int entryCount = 0;
-        int renderedEntries = 0;
+        // Отрисовка элементов списка с учетом прокрутки
+        int renderedCount = 0;
+        int entryIndex = 0;
 
         for (Map.Entry<String, String> entry : servers.entrySet()) {
-            if (renderedEntries >= visibleEntries) break;
-            if (entryCount < scrollOffset) {
-                entryCount++;
+            if (entryIndex < scrollOffset) {
+                entryIndex++;
                 continue;
+            }
+
+            if (renderedCount >= visibleEntries) {
+                break;
             }
 
             String ip = entry.getKey();
             String password = entry.getValue();
-
             String displayText = ip + "=" + password;
-            context.drawText(this.textRenderer, Text.literal(displayText), listX, listY + renderedEntries * entryHeight, 0xFFFFFFFF, false);
 
+            int entryY = listY + renderedCount * entryHeight;
+
+            // Подсветка выбранного элемента
             if (ip.equals(selectedServer)) {
-                context.fill(listX, listYPol + renderedEntries * entryHeight, listXPol + listWidthPol, listYPol + (renderedEntries + 1) * entryHeight, 0x30FFFFFF);
+                context.fill(listX, entryY, listX + listWidth, entryY + entryHeight, 0x30FFFFFF);
             }
 
-            renderedEntries++;
+            // Обрезка текста по ширине
+            String truncatedText = textRenderer.trimToWidth(displayText, listWidth - 10);
+            context.drawText(this.textRenderer, Text.literal(truncatedText), listX + 2, entryY + 5, 0xFFFFFFFF, false);
+
+            renderedCount++;
+            entryIndex++;
         }
 
-        if (maxScroll > 0) {
-            int scrollBarX = listX + listWidth - 5;
-            int scrollBarHeight = listHeight * visibleEntries / totalEntries;
-            int scrollBarY = listY + (int)((listHeight - scrollBarHeight) * ((float)scrollOffset / maxScroll));
+        // Полоса прокрутки
+        if (totalEntries > visibleEntries) {
+            int scrollBarX = listX + listWidth - 6;
+            int scrollBarWidth = 4;
+            int maxScroll = Math.max(0, totalEntries - visibleEntries);
 
-            context.fill(scrollBarX, scrollBarY, scrollBarX + 5, scrollBarY + scrollBarHeight, 0x808080);
+            // Фон полосы прокрутки
+            context.fill(scrollBarX, listY, scrollBarX + scrollBarWidth, listY + listHeight, 0x40FFFFFF);
+
+            if (maxScroll > 0) {
+                int scrollBarHeight = Math.max(10, listHeight * visibleEntries / totalEntries);
+                int scrollBarY = listY + (int)((float)(listHeight - scrollBarHeight) * scrollOffset / maxScroll);
+
+                // Полоса прокрутки
+                context.fill(scrollBarX, scrollBarY, scrollBarX + scrollBarWidth, scrollBarY + scrollBarHeight, 0xFFFFFFFF);
+            }
         }
 
-        // Отрисовка заголовков полей по центру
+        // Отрисовка заголовков полей
         context.drawText(this.textRenderer, Text.translatable("config.autologin_mod.ip"), width / 4, height / 4 + 45, 0xFFFFFFFF, false);
         context.drawText(this.textRenderer, Text.translatable("config.autologin_mod.password"), width / 4, height / 4 + 85, 0xFFFFFFFF, false);
         context.drawText(this.textRenderer, Text.translatable("config.autologin_mod.login_command"), width / 4, height / 4 + 125, 0xFFFFFFFF, false);
+
         String statusText = Text.translatable("config.autologin_mod.status", config.check_enabled ? "Включен" : "Выключен").getString();
         int statusX = width / 2 - textRenderer.getWidth(statusText) / 2;
         context.drawText(this.textRenderer, statusText, statusX, 40, 0xFFFFFFFF, false);
 
         // Отрисовка текущего триггер-слова
         context.drawText(this.textRenderer, Text.translatable("config.autologin_mod.current_trigger", loginCommandField.getText()), width / 4, height / 4 + 165, 0xFFFFFFFF, false);
-
-
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount, double delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         int listX = width / 4 * 3;
         int listY = height / 4 + 20;
         int listWidth = width / 4;
         int listHeight = height / 2 - 40;
+        int entryHeight = 20;
+        int visibleEntries = listHeight / entryHeight;
 
+        // Проверяем, находится ли курсор над списком
         if (mouseX >= listX && mouseX < listX + listWidth &&
                 mouseY >= listY && mouseY < listY + listHeight) {
-            scrollOffset = Math.max(0, Math.min(scrollOffset - (int)amount, servers.size() - (listHeight / 20)));
+
+            int maxScroll = Math.max(0, servers.size() - visibleEntries);
+            scrollOffset = Math.max(0, Math.min(maxScroll, scrollOffset - (int)verticalAmount));
             return true;
         }
 
-        return super.mouseScrolled(mouseX, mouseY, amount, delta);
-    }
-
-    // Добавьте метод для переключения проверки
-    private void toggleLoginCheck() {
-        config.check_enabled = !config.check_enabled;
-        toggleCheckButton.setMessage(Text.translatable(config.check_enabled ? "config.autologin_mod.enabled" : "config.autologin_mod.disabled"));
-        JSONConfigHandler.saveCurrentPlayerConfig(config);
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        // Сначала проверяем, кликнули ли по какому-либо элементу интерфейса (кнопкам, полям ввода)
+        // Сначала проверяем стандартные элементы
         boolean handled = super.mouseClicked(mouseX, mouseY, button);
 
-        // Если событие не было обработано другими элементами, проверяем клик по списку серверов
+        // Если не обработано и левая кнопка мыши
         if (!handled && button == 0) {
             int listX = width / 4 * 3;
             int listY = height / 4 + 20;
             int listWidth = width / 4;
             int listHeight = height / 2 - 40;
             int entryHeight = 20;
+            int visibleEntries = listHeight / entryHeight;
 
+            // Проверяем клик по списку
             if (mouseX >= listX && mouseX < listX + listWidth &&
                     mouseY >= listY && mouseY < listY + listHeight) {
-                int entryIndex = (int) ((mouseY - listY) / entryHeight);
-                int entryCount = 0;
 
-                for (Map.Entry<String, String> entry : servers.entrySet()) {
-                    if (entryIndex == entryCount) {
-                        selectedServer = entry.getKey();
-                        break;
+                int clickedIndex = (int)((mouseY - listY) / entryHeight);
+                int actualIndex = scrollOffset + clickedIndex;
+
+                // Проверяем, что индекс в допустимых пределах
+                if (actualIndex >= 0 && actualIndex < servers.size()) {
+                    int currentIndex = 0;
+                    for (Map.Entry<String, String> entry : servers.entrySet()) {
+                        if (currentIndex == actualIndex) {
+                            selectedServer = entry.getKey();
+                            return true;
+                        }
+                        currentIndex++;
                     }
-                    entryCount++;
                 }
             } else {
+                // Клик вне списка - сбрасываем выбор
                 selectedServer = null;
             }
         }
 
-        return true; // Возвращаем true, так как событие было обработано
+        return handled;
+    }
+
+    private void toggleLoginCheck() {
+        config.check_enabled = !config.check_enabled;
+        toggleCheckButton.setMessage(Text.translatable(config.check_enabled ? "config.autologin_mod.enabled" : "config.autologin_mod.disabled"));
+        JSONConfigHandler.saveCurrentPlayerConfig(config);
     }
 
     private void addServer() {
@@ -308,21 +320,24 @@ public class AutoLoginConfigScreen extends Screen {
         if (selectedServer != null && servers.containsKey(selectedServer)) {
             servers.remove(selectedServer);
             saveConfig();
-            selectedServer = null; // Сброс выбранного сервера
+            selectedServer = null;
+
+            // Корректируем прокрутку после удаления
+            int entryHeight = 20;
+            int visibleEntries = (height / 2 - 40) / entryHeight;
+            int maxScroll = Math.max(0, servers.size() - visibleEntries);
+            scrollOffset = Math.min(scrollOffset, maxScroll);
         }
     }
 
-    //Метод загрузки конфига
     private void loadConfig() {
         config = JSONConfigHandler.getCurrentPlayerConfig();
         servers.putAll(config.passwords);
-        // Устанавливаем значение триггер-слова в поле ввода
         if (loginCommandField != null) {
             loginCommandField.setText(config.triggers);
         }
     }
 
-    // Метод сохранения конфига
     private void saveConfig() {
         if (config != null && loginCommandField != null) {
             config.triggers = loginCommandField.getText();
@@ -341,27 +356,39 @@ public class AutoLoginConfigScreen extends Screen {
             return true;
         }
         if (loginCommandField.keyPressed(keyCode, scanCode, modifiers)) {
-            if (keyCode == 256) { // Код клавиши Enter
+            if (keyCode == 256) { // Enter
                 saveConfig();
             }
             return true;
         }
 
-        // Удаление сервера по клавише Delete
-        if (keyCode == 261) { // Код клавиши Delete
+        // Удаление сервера по Delete
+        if (keyCode == 261) { // Delete
             if (selectedServer != null) {
                 deleteServer();
                 return true;
             }
         }
 
-        // Копирование пароля в буфер обмена при Ctrl + C
-        if (keyCode == 67 && (modifiers & 2) != 0) { // 67 = C, 2 = Ctrl
+        // Копирование пароля Ctrl+C
+        if (keyCode == 67 && (modifiers & 2) != 0) { // C + Ctrl
             if (selectedServer != null && servers.containsKey(selectedServer)) {
                 String password = servers.get(selectedServer);
                 if (password != null) {
+                    assert client != null;
                     client.keyboard.setClipboard(password);
                 }
+                return true;
+            }
+        }
+
+        // Навигация стрелками
+        if (selectedServer != null) {
+            if (keyCode == 264) { // Стрелка вниз
+                selectNextServer(1);
+                return true;
+            } else if (keyCode == 265) { // Стрелка вверх
+                selectNextServer(-1);
                 return true;
             }
         }
@@ -369,6 +396,34 @@ public class AutoLoginConfigScreen extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
+    private void selectNextServer(int direction) {
+        if (servers.isEmpty()) return;
+
+        String[] serverKeys = servers.keySet().toArray(new String[0]);
+        int currentIndex = -1;
+
+        // Найти текущий индекс
+        for (int i = 0; i < serverKeys.length; i++) {
+            if (serverKeys[i].equals(selectedServer)) {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        // Вычислить новый индекс
+        int newIndex = Math.max(0, Math.min(serverKeys.length - 1, currentIndex + direction));
+        selectedServer = serverKeys[newIndex];
+
+        // Автопрокрутка к выбранному элементу
+        int entryHeight = 20;
+        int visibleEntries = (height / 2 - 40) / entryHeight;
+
+        if (newIndex < scrollOffset) {
+            scrollOffset = newIndex;
+        } else if (newIndex >= scrollOffset + visibleEntries) {
+            scrollOffset = newIndex - visibleEntries + 1;
+        }
+    }
 
     @Override
     public boolean charTyped(char chr, int modifiers) {

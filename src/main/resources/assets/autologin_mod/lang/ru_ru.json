@@ -23,5 +23,6 @@
   "error.not_connected": "§4Нет подключения!",
   "error.no_password": "§4Пароля для сервера нету!",
   "error.no_triggers": "§4Нету триггеров!",
-  "error.already_password": "§4Для сервера §r%s §4уже есть пароль"
+  "error.already_password": "§4Для сервера §r%s §4уже есть пароль",
+  "autologin.description": "Мод для автоматического ввода пароля"
 }

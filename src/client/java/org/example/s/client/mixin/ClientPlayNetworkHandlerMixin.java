@@ -9,6 +9,7 @@ import org.example.s.client.MessageProcessor;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -56,6 +57,7 @@ private static final Logger LOGGER = LogManager.getLogger("AutoLogin");
 
 
     // Метод для извлечения текста босс-бара с fallback-парсингом
+    @Unique
     private Text extractBossBarText(Object obj) {
         if (obj == null) return null;
         try {
@@ -131,6 +133,7 @@ private static final Logger LOGGER = LogManager.getLogger("AutoLogin");
     }
 
     // Упрощённый метод-обёртка:
+    @Unique
     private Text findTextRecursively(Object obj) {
         return findTextRecursively(obj, 0, 10, new HashSet<>());
     }
