@@ -104,6 +104,7 @@ public class CommandHandler {
             config.passwords.put(server.address, password);
             JSONConfigHandler.saveCurrentPlayerConfig(config);
 
+            assert client.player != null;
             client.player.sendMessage(
                     Text.translatable("message.autologin", server.address, password),
                     false
@@ -143,6 +144,9 @@ public class CommandHandler {
         // Правильный способ отправки команды
         if (client.getNetworkHandler() != null) {
             client.getNetworkHandler().sendChatCommand(command);
+            config = JSONConfigHandler.getCurrentPlayerConfig();
+            config.currentCheck = true;
+            JSONConfigHandler.saveCurrentPlayerConfig(config);
         }
 
         return 1;

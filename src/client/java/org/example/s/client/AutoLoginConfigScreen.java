@@ -160,7 +160,7 @@ public class AutoLoginConfigScreen extends Screen {
         context.fill(listX - 1, listY - 1, listX + listWidth + 1, listY + listHeight + 1, 0x80000000);
 
         String username = MinecraftClient.getInstance().getSession().getUsername();
-        context.drawText(this.textRenderer, Text.translatable("config.autologin_mod.saved_servers", username), listX, listY - 20, 0xFFFFFFFF, false);
+        context.drawTextWithShadow(this.textRenderer, Text.translatable("config.autologin_mod.saved_servers", username), listX, listY - 20, 0xFFFFFFFF);
 
         // Отрисовка элементов списка с учетом прокрутки
         int renderedCount = 0;
@@ -189,7 +189,7 @@ public class AutoLoginConfigScreen extends Screen {
 
             // Обрезка текста по ширине
             String truncatedText = textRenderer.trimToWidth(displayText, listWidth - 10);
-            context.drawText(this.textRenderer, Text.literal(truncatedText), listX + 2, entryY + 5, 0xFFFFFFFF, false);
+            context.drawTextWithShadow(this.textRenderer, Text.literal(truncatedText), listX + 2, entryY + 5, 0xFFFFFFFF);
 
             renderedCount++;
             entryIndex++;

@@ -3,6 +3,7 @@ package org.example.s.client;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MessageProcessor {
-    private static JSONConfigHandler.PlayerConfig config = JSONConfigHandler.getCurrentPlayerConfig();
+    private static JSONConfigHandler.PlayerConfig config;
     private static final Pattern WS_PATTERN = Pattern.compile("[^\\S\\r\\n]+");
     private static final Pattern TRAIL_COMMAS = Pattern.compile("[,]+$");
     public static List<String> triggers;
@@ -32,6 +33,7 @@ public class MessageProcessor {
                         .replaceAll("")
                         .replace("/", "")
         ).replaceAll("");
+        reloadConfig();
 
 
         MinecraftClient client = MinecraftClient.getInstance();
@@ -48,6 +50,7 @@ public class MessageProcessor {
         for (String trigger : triggers) {
             if (text.contains(trigger.trim())) {
                 client.getNetworkHandler().sendChatCommand("login " + password);
+                reloadConfig();
                 config.currentCheck = false;
                 JSONConfigHandler.saveCurrentPlayerConfig(config);
                 return;
