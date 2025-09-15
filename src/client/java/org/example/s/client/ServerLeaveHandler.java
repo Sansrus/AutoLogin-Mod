@@ -1,17 +1,17 @@
 package org.example.s.client;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+
 
 public class ServerLeaveHandler {
     public static void init() {
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.getCurrentServerEntry() == null) {
+        // Сбрасываем флаг отправки команды после отключения игрока
+        ClientPlayConnectionEvents.DISCONNECT.register((phase, client) -> {
                 JSONConfigHandler.PlayerConfig config = JSONConfigHandler.getCurrentPlayerConfig();
                 if (!config.currentCheck) {
                     config.currentCheck = true;
                     JSONConfigHandler.saveCurrentPlayerConfig(config);
                 }
-            }
         });
     }
 }

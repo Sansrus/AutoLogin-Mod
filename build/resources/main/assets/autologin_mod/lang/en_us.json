@@ -24,5 +24,6 @@
   "error.no_password": "§4There is no password for the server!",
   "error.no_triggers": "§4No triggers!",
   "error.already_password": "§4There is already a password for the §r%s §4server.",
-  "autologin.description": "Mod for automatic password entry"
+  "autologin.description": "Mod for automatic password entry",
+  "config.autologin_mod.autosend": "Automatic sending of a command"
 }

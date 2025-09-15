@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+// Конфиг
 public class JSONConfigHandler {
     private static final File CONFIG_FILE = new File(MinecraftClient.getInstance().runDirectory, "config/autologin.json");
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -23,6 +24,7 @@ public class JSONConfigHandler {
         public String triggers = "login";
         public boolean check_enabled = true;
         public boolean currentCheck = true;
+        public boolean autosend = false;
         public Map<String, String> passwords = new HashMap<>();
     }
 

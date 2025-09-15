@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+// Обработка входящего текста и отправка команды логина
 public class MessageProcessor {
     private static JSONConfigHandler.PlayerConfig config;
     private static final Pattern WS_PATTERN = Pattern.compile("[^\\S\\r\\n]+");
@@ -35,7 +36,6 @@ public class MessageProcessor {
         ).replaceAll("");
         reloadConfig();
 
-
         MinecraftClient client = MinecraftClient.getInstance();
         if (client == null || client.player == null) return;
 
@@ -47,9 +47,12 @@ public class MessageProcessor {
         String password = config.passwords.get(serverAddress);
         if (password == null) return;
 
+        boolean isAutoSend = config.autosend;
+        if (isAutoSend) return;
+
         for (String trigger : triggers) {
             if (text.contains(trigger.trim())) {
-                client.getNetworkHandler().sendChatCommand("login " + password);
+                client.getNetworkHandler().sendChatCommand(trigger + " " + password);
                 reloadConfig();
                 config.currentCheck = false;
                 JSONConfigHandler.saveCurrentPlayerConfig(config);
