@@ -1,4 +1,4 @@
-package org.example.s.client;
+package org.example.s.client1_21;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 

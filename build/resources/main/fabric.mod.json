@@ -15,12 +15,12 @@
   "environment": "client",
   "entrypoints": {
     "client": [
-      "org.example.s.client.autologin_modClient"
+      "org.example.s.client1_21.autologin_modClient"
     ],
     "main": [
       "org.example.s.autologin_mod"
     ],
-    "modmenu": ["org.example.s.client.autologin_modClient"]
+    "modmenu": ["org.example.s.client1_21.autologin_modClient"]
   },
   "mixins": [
     {
@@ -29,12 +29,12 @@
     }
   ],
   "depends": {
-    "fabricloader": ">=0.16.14",
+    "fabricloader": ">=0.18.1",
     "fabric": "*",
     "minecraft": ">=1.21"
   },
   "suggests": {
-    "modmenu": ">=11.0.1",
-    "cloth-config": ">=15.0.140"
+    "modmenu": ">=16.0.0-rc.2",
+    "cloth-config": ">=20.0.149"
   }
 }

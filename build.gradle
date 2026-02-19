@@ -1,6 +1,7 @@
 plugins {
-    id 'fabric-loom' version '1.10-SNAPSHOT'
+    id 'fabric-loom' version '1.13.6'
     id 'maven-publish'
+    id "dev.kikugie.stonecutter"
 }
 
 version = project.mod_version
@@ -21,17 +22,54 @@ loom {
     }
 }
 
+processResources {
+    outputs.upToDateWhen { false }
+    inputs.property "version", project.version
+    inputs.property "mc_dep_range", project.mc_dep_range
+    inputs.property "loader_dep_range", project.loader_dep_range
+    inputs.property "modmenu_dep_range", project.modmenu_dep_range
+    inputs.property "clothconfig_dep_range", project.clothconfig_dep_range
+
+    filesMatching("fabric.mod.json") {
+        expand(
+                version: project.version,
+                mc_dep_range: project.mc_dep_range,
+                loader_dep_range: project.loader_dep_range,
+                modmenu_dep_range: project.modmenu_dep_range,
+                clothconfig_dep_range: project.clothconfig_dep_range
+        )
+    }
+}
+
+
+
 repositories {
     mavenCentral()
-    maven { url = "https://jitpack.io" }
-    maven { url = 'https://maven.shedaniel.me/' }
     maven {
-        url = "https://maven.fabricmc.net/"
+        url = "https://maven.terraformersmc.com/releases"
         content {
-            excludeGroup "com.github.TeamMidnightDust"
+            includeGroup "com.terraformersmc"
         }
     }
-    maven { url = "https://maven.terraformersmc.com/releases" }
+    maven {
+        url = "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven {
+        url = 'https://maven.shedaniel.me/'
+        content {
+            includeGroup "me.shedaniel.cloth"
+            includeGroup "me.shedaniel"
+        }
+    }
+    maven { url = "https://jitpack.io" }
+    maven { url = "https://maven.fabricmc.net/" }
+
+    flatDir {
+        dirs rootProject.file('libs')
+    }
 }
 
 dependencies {
@@ -40,10 +78,14 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-//    modImplementation "com.terraformersmc:modmenu:15.0.0-beta.3"
-//    modImplementation "me.shedaniel.cloth:cloth-config-fabric:19.0.146"
-    modImplementation "com.terraformersmc:modmenu:11.0.3"
-    modImplementation "me.shedaniel.cloth:cloth-config-fabric:15.0.140"
+//    modImplementation "com.terraformersmc:modmenu:16.0.0-rc.2"
+//    modImplementation "me.shedaniel.cloth:cloth-config-fabric:20.0.149"
+
+    modImplementation name: project.modmenu_version
+    modImplementation name: project.clothconfig_version
+
+//    modImplementation name: 'modmenu-17.0.0-beta.1'
+//    modImplementation name: 'cloth-config-21.11.153-fabric'
 }
 
 processResources {

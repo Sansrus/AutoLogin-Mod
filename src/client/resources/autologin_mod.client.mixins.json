@@ -1,13 +1,17 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "org.example.s.client.mixin",
+  "package": "org.example.s.client1_21.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "BossBarHudAccessor",
     "ChatHudMixin",
     "ClientPlayNetworkHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "mixins": [
+    "BossBarS2CPacketAccessor"
+  ]
 }

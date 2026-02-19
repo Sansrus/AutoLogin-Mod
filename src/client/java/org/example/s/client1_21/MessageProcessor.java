@@ -1,12 +1,12 @@
-package org.example.s.client;
+package org.example.s.client1_21;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -37,7 +37,7 @@ public class MessageProcessor {
         reloadConfig();
 
         MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.player == null) return;
+        if (client == null || client.player == null || config == null) return;
 
         if (!config.currentCheck) return;
 
@@ -52,7 +52,7 @@ public class MessageProcessor {
 
         for (String trigger : triggers) {
             if (text.contains(trigger.trim())) {
-                client.getNetworkHandler().sendChatCommand(trigger + " " + password);
+                Objects.requireNonNull(client.getNetworkHandler()).sendChatCommand(trigger + " " + password);
                 reloadConfig();
                 config.currentCheck = false;
                 JSONConfigHandler.saveCurrentPlayerConfig(config);

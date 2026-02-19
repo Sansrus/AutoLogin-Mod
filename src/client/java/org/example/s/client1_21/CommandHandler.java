@@ -1,4 +1,4 @@
-package org.example.s.client;
+package org.example.s.client1_21;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -59,6 +59,7 @@ public class CommandHandler {
                     MinecraftClient client = MinecraftClient.getInstance();
                     ServerInfo server = client.getCurrentServerEntry();
                     if (server == null) {
+                        client.player.sendMessage(Text.translatable("error.not_connected"), false);
                         return 0;
                     }
                     String address = server.address;

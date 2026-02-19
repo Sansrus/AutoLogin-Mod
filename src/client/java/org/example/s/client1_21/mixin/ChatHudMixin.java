@@ -1,4 +1,4 @@
-package org.example.s.client.mixin;
+package org.example.s.client1_21.mixin;
 
 import net.minecraft.client.gui.hud.ChatHud;
 import net.minecraft.client.gui.hud.MessageIndicator;
@@ -6,7 +6,7 @@ import net.minecraft.network.message.MessageSignatureData;
 import net.minecraft.text.Text;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.example.s.client.MessageProcessor;
+import org.example.s.client1_21.MessageProcessor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

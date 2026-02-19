@@ -1,4 +1,4 @@
-package org.example.s.client;
+package org.example.s.client1_21;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -8,6 +8,12 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.CheckboxWidget;
 import net.minecraft.text.Text;
 import org.example.s.PasswordGenerator;
+
+//? if >=1.21.10 {
+/*import net.minecraft.client.gui.Click;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.input.CharInput;
+*///?}
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +40,7 @@ public class AutoLoginConfigScreen extends Screen {
         super(Text.translatable("config.autologin_mod.title"));
         this.parent = parent;
     }
+
 
     @Override
     protected void init() {
@@ -99,7 +106,7 @@ public class AutoLoginConfigScreen extends Screen {
         ).dimensions(width / 4 * 3, (int) (height * 0.74), 100, 20).build();
 
         // Чекбокс "Автоматически вводить пароль" под полем loginCommandField
-        int checkboxY = height / 4 + 165; // поле Y + высота поля + небольшой отступ
+        int checkboxY = height / 4 + 165;
         autosendToggle = CheckboxWidget.builder(
                         Text.translatable("config.autologin_mod.autosend"),
                         textRenderer
@@ -151,7 +158,7 @@ public class AutoLoginConfigScreen extends Screen {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
-        // Параметры списка серверов (вручную)
+        // Параметры списка серверов
         int listX = width / 4 * 3;
         int listY = height / 4 + 20;
         int listWidth = width / 4;
@@ -212,7 +219,7 @@ public class AutoLoginConfigScreen extends Screen {
             }
         }
 
-        // Подписи над полями: центрируем относительно поля (fieldLeft + fieldWidth/2)
+        // Подписи над полями
         int fieldLeft = width / 4;
         int fieldWidth = 200;
         int fieldCenter = fieldLeft + fieldWidth / 2;
@@ -221,7 +228,7 @@ public class AutoLoginConfigScreen extends Screen {
         context.drawCenteredTextWithShadow(this.textRenderer, Text.translatable("config.autologin_mod.password"), fieldCenter, height / 4 + 85, 0xFFFFFFFF);
         context.drawCenteredTextWithShadow(this.textRenderer, Text.translatable("config.autologin_mod.login_command"), fieldCenter, height / 4 + 125, 0xFFFFFFFF);
 
-        // Строка статуса — центр по экрану
+        // Строка статуса
         String statusText = Text.translatable("config.autologin_mod.status", config.check_enabled ? Text.translatable("config.autologin_mod.enabled") : Text.translatable("config.autologin_mod.disabled")).getString();
         context.drawCenteredTextWithShadow(this.textRenderer, Text.literal(statusText), width / 2, 40, 0xFFFFFFFF);
     }
@@ -247,24 +254,32 @@ public class AutoLoginConfigScreen extends Screen {
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        boolean handled = super.mouseClicked(mouseX, mouseY, button);
+    //? if >=1.21.10 {
+    /*@Override
+    public boolean mouseClicked(Click click, boolean bl) {
+        double mouseX = click.x();
+        double mouseY = click.y();
+        int button = click.button();
+        boolean handled = super.mouseClicked(click, bl);
+*///?} else {
 
+@Override
+public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    boolean handled = super.mouseClicked(mouseX, mouseY, button);
+//?}
+
+        // Дальше — общий код, использующий mouseX, mouseY, button
         if (!handled && button == 0) {
             int listX = width / 4 * 3;
             int listY = height / 4 + 20;
             int listWidth = width / 4;
             int listHeight = height / 2 - 40;
             int entryHeight = 20;
-            int visibleEntries = listHeight / entryHeight;
 
             if (mouseX >= listX && mouseX < listX + listWidth &&
                     mouseY >= listY && mouseY < listY + listHeight) {
-
                 int clickedIndex = (int)((mouseY - listY) / entryHeight);
                 int actualIndex = scrollOffset + clickedIndex;
-
                 if (actualIndex >= 0 && actualIndex < servers.size()) {
                     int currentIndex = 0;
                     for (Map.Entry<String, String> entry : servers.entrySet()) {
@@ -279,9 +294,10 @@ public class AutoLoginConfigScreen extends Screen {
                 selectedServer = null;
             }
         }
-
         return handled;
     }
+
+
 
     private void toggleLoginCheck() {
         config.check_enabled = !config.check_enabled;
@@ -350,50 +366,54 @@ public class AutoLoginConfigScreen extends Screen {
         }
     }
 
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (ipField.keyPressed(keyCode, scanCode, modifiers)) return true;
-        if (passwordField.keyPressed(keyCode, scanCode, modifiers)) return true;
-        if (loginCommandField.keyPressed(keyCode, scanCode, modifiers)) {
-            if (keyCode == 256) { // Enter
-                saveConfig();
+    //? if >=1.21.10 {
+    /*@Override
+    public boolean keyPressed(KeyInput input) {
+        int keyCode = input.key();
+        int modifiers = input.modifiers();
+        if (ipField.keyPressed(input)) return true;
+        if (passwordField.keyPressed(input)) return true;
+        if (loginCommandField.keyPressed(input)) {
+            if (keyCode == 257) saveConfig();
+            return true;
+        }
+*///?} else {
+
+@Override
+public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    if (ipField.keyPressed(keyCode, scanCode, modifiers)) return true;
+    if (passwordField.keyPressed(keyCode, scanCode, modifiers)) return true;
+    if (loginCommandField.keyPressed(keyCode, scanCode, modifiers)) {
+        if (keyCode == 257) saveConfig();
+        return true;
+    }
+//?}
+
+        // Общий код — keyCode и modifiers уже объявлены выше в обоих ветках
+        if (keyCode == 261 && selectedServer != null) {
+            deleteServer();
+            return true;
+        }
+        if (keyCode == 67 && (modifiers & 2) != 0 && selectedServer != null) {
+            String password = servers.get(selectedServer);
+            if (password != null) {
+                assert client != null;
+                client.keyboard.setClipboard(password);
             }
             return true;
         }
-
-        // Удаление сервера по Delete
-        if (keyCode == 261) { // Delete
-            if (selectedServer != null) {
-                deleteServer();
-                return true;
-            }
-        }
-
-        // Копирование пароля Ctrl+C
-        if (keyCode == 67 && (modifiers & 2) != 0) { // C + Ctrl
-            if (selectedServer != null && servers.containsKey(selectedServer)) {
-                String password = servers.get(selectedServer);
-                if (password != null) {
-                    assert client != null;
-                    client.keyboard.setClipboard(password);
-                }
-                return true;
-            }
-        }
-
-        // Навигация стрелками
         if (selectedServer != null) {
-            if (keyCode == 264) { // Стрелка вниз
-                selectNextServer(1);
-                return true;
-            } else if (keyCode == 265) { // Стрелка вверх
-                selectNextServer(-1);
-                return true;
-            }
+            if (keyCode == 264) { selectNextServer(1); return true; }
+            if (keyCode == 265) { selectNextServer(-1); return true; }
         }
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        //? if >=1.21.10 {
+        /*return super.keyPressed(input);
+        *///?} else {
+        return super.keyPressed(keyCode, scanCode, modifiers);//?}
     }
+
+
 
     private void selectNextServer(int direction) {
         if (servers.isEmpty()) return;
@@ -421,11 +441,22 @@ public class AutoLoginConfigScreen extends Screen {
         }
     }
 
-    @Override
-    public boolean charTyped(char chr, int modifiers) {
-        if (ipField.charTyped(chr, modifiers)) return true;
-        if (passwordField.charTyped(chr, modifiers)) return true;
-        if (loginCommandField.charTyped(chr, modifiers)) return true;
-        return super.charTyped(chr, modifiers);
+    //? if >=1.21.10 {
+    /*@Override
+    public boolean charTyped(CharInput input) {
+        if (ipField.charTyped(input)) return true;
+        if (passwordField.charTyped(input)) return true;
+        if (loginCommandField.charTyped(input)) return true;
+        return super.charTyped(input);
+*///?} else {
+
+@Override
+public boolean charTyped(char chr, int modifiers) {
+    if (ipField.charTyped(chr, modifiers)) return true;
+    if (passwordField.charTyped(chr, modifiers)) return true;
+    if (loginCommandField.charTyped(chr, modifiers)) return true;
+    return super.charTyped(chr, modifiers);
+//?}
     }
+
 }
