@@ -1,7 +1,6 @@
 plugins {
-    id 'fabric-loom' version '1.13.6'
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
     id 'maven-publish'
-    id "dev.kikugie.stonecutter"
 }
 
 version = project.mod_version
@@ -15,33 +14,12 @@ loom {
     splitEnvironmentSourceSets()
 
     mods {
-        "autologin_mod" {
+        "autologin_mod26_1" {
             sourceSet sourceSets.main
             sourceSet sourceSets.client
         }
     }
 }
-
-processResources {
-    outputs.upToDateWhen { false }
-    inputs.property "version", project.version
-    inputs.property "mc_dep_range", project.mc_dep_range
-    inputs.property "loader_dep_range", project.loader_dep_range
-    inputs.property "modmenu_dep_range", project.modmenu_dep_range
-    inputs.property "clothconfig_dep_range", project.clothconfig_dep_range
-
-    filesMatching("fabric.mod.json") {
-        expand(
-                version: project.version,
-                mc_dep_range: project.mc_dep_range,
-                loader_dep_range: project.loader_dep_range,
-                modmenu_dep_range: project.modmenu_dep_range,
-                clothconfig_dep_range: project.clothconfig_dep_range
-        )
-    }
-}
-
-
 
 repositories {
     mavenCentral()
@@ -57,14 +35,6 @@ repositories {
             includeGroup "curse.maven"
         }
     }
-    maven {
-        url = 'https://maven.shedaniel.me/'
-        content {
-            includeGroup "me.shedaniel.cloth"
-            includeGroup "me.shedaniel"
-        }
-    }
-    maven { url = "https://jitpack.io" }
     maven { url = "https://maven.fabricmc.net/" }
 
     flatDir {
@@ -74,18 +44,10 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-//    modImplementation "com.terraformersmc:modmenu:16.0.0-rc.2"
-//    modImplementation "me.shedaniel.cloth:cloth-config-fabric:20.0.149"
-
-    modImplementation name: project.modmenu_version
-    modImplementation name: project.clothconfig_version
-
-//    modImplementation name: 'modmenu-17.0.0-beta.1'
-//    modImplementation name: 'cloth-config-21.11.153-fabric'
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "curse.maven:modmenu-308702:7813924"
 }
 
 processResources {
@@ -101,7 +63,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 25
 tasks.withType(JavaCompile).configureEach {
     // ensure that the encoding is set to UTF-8, no matter what the system default is
     // this fixes some edge cases with special characters not displaying correctly
@@ -126,7 +88,7 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
+        rename { "${it}_${project.archives_base_name}"}
     }
 }
 
@@ -146,4 +108,8 @@ publishing {
         // The repositories here will be used for publishing your artifact, not for
         // retrieving dependencies.
     }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:deprecation"
 }

@@ -5,20 +5,5 @@ pluginManagement {
             url = 'https://maven.fabricmc.net/'
         }
         gradlePluginPortal()
-        maven { url "https://maven.kikugie.dev/releases" }
     }
-}
-
-plugins {
-    id "dev.kikugie.stonecutter" version "0.5.1"
-}
-
-stonecutter {
-    kotlinController = false
-    centralScript = "build.gradle"
-    shared {
-        vers("1.21",    "1.21")
-        vers("1.21.10", "1.21.10")
-    }
-    create(rootProject)
 }

@@ -3,38 +3,36 @@
   "id": "autologin_mod",
   "version": "${version}",
   "name": "AutoLogin Mod",
-  "description": "Мод для автоматического ввода пароля",
-  "authors": ["Sansrus"],
-  "contact": {
-    "homepage": "https://modrinth.com/user/Sansrus",
-    "sources": "https://github.com/Sansrus/AutoLogin-Mod",
-    "issues": "https://github.com/Sansrus/AutoLogin-Mod/issues"
-  },
+  "description": " ",
+  "authors": [],
+  "contact": {},
   "license": "All-Rights-Reserved",
   "icon": "icon.png",
-  "environment": "client",
+  "environment": "*",
   "entrypoints": {
     "client": [
-      "org.example.s.client1_21.autologin_modClient"
+      "ru.sansrus.autologin_mod.client.AutologinmodClient"
     ],
     "main": [
-      "org.example.s.autologin_mod"
+      "ru.sansrus.autologin_mod.Autologin_mod"
     ],
-    "modmenu": ["org.example.s.client1_21.ModMenuIntegration"]
+    "modmenu": [
+      "ru.sansrus.autologin_mod.client.ModMenuIntegration"
+    ]
   },
   "mixins": [
+    "autologin_mod.mixins.json",
     {
       "config": "autologin_mod.client.mixins.json",
       "environment": "client"
     }
   ],
   "depends": {
-    "fabric": "*",
-    "minecraft": "${mc_dep_range}",
-    "fabricloader": "${loader_dep_range}",
-    "cloth-config": "${clothconfig_dep_range}"
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": ">=${minecraft_version}"
   },
   "suggests": {
-    "modmenu": "${modmenu_dep_range}"
+    "modmenu": ">=v18.0.0-alpha.7"
   }
 }
