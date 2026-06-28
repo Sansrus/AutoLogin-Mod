@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "autologin_mod",
+  "version": "${version}",
+  "name": "AutoLogin Mod",
+  "description": " ",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "ru.sansrus.autologin_mod.client.AutologinmodClient"
+    ],
+    "main": [
+      "ru.sansrus.autologin_mod.Autologin_mod"
+    ],
+    "modmenu": [
+      "ru.sansrus.autologin_mod.client.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "autologin_mod.mixins.json",
+    {
+      "config": "autologin_mod.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": ">=${minecraft_version}"
+  },
+  "suggests": {
+    "modmenu": ">=v18.0.0-alpha.7"
+  }
+}

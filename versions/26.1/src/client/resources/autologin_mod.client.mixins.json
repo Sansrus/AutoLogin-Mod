@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "ru.sansrus.autologin_mod.client.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "mixins": [
+    "BossBarHudAccessor",
+    "BossBarS2CPacketAccessor",
+    "ChatHudMixin",
+    "ClientPlayNetworkHandlerMixin",
+    "M"
+  ]
+}
